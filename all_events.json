@@ -1,0 +1,426 @@
+[
+  {
+    "distance": 50,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 1,
+    "eventCode": "50 FR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 2,
+    "eventCode": "100 FR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 3,
+    "eventCode": "200 FR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 500,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 4,
+    "eventCode": "500 FR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 1000,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 5,
+    "eventCode": "1000 FR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 1650,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 6,
+    "eventCode": "1650 FR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 11,
+    "eventCode": "50 BK SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 12,
+    "eventCode": "100 BK SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 13,
+    "eventCode": "200 BK SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 14,
+    "eventCode": "50 BR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 15,
+    "eventCode": "100 BR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 16,
+    "eventCode": "200 BR SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 17,
+    "eventCode": "50 FL SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 18,
+    "eventCode": "100 FL SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 19,
+    "eventCode": "200 FL SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 20,
+    "eventCode": "100 IM SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 21,
+    "eventCode": "200 IM SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 400,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 22,
+    "eventCode": "400 IM SCY",
+    "courseCode": "SCY"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 28,
+    "eventCode": "50 FR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 29,
+    "eventCode": "100 FR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 30,
+    "eventCode": "200 FR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 400,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 31,
+    "eventCode": "400 FR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 800,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 32,
+    "eventCode": "800 FR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 1500,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 33,
+    "eventCode": "1500 FR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 38,
+    "eventCode": "50 BK SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 39,
+    "eventCode": "100 BK SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 40,
+    "eventCode": "200 BK SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 41,
+    "eventCode": "50 BR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 42,
+    "eventCode": "100 BR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 43,
+    "eventCode": "200 BR SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 44,
+    "eventCode": "50 FL SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 45,
+    "eventCode": "100 FL SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 46,
+    "eventCode": "200 FL SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 47,
+    "eventCode": "100 IM SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 48,
+    "eventCode": "200 IM SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 400,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 49,
+    "eventCode": "400 IM SCM",
+    "courseCode": "SCM"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 55,
+    "eventCode": "50 FR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 56,
+    "eventCode": "100 FR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 57,
+    "eventCode": "200 FR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 400,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 58,
+    "eventCode": "400 FR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 800,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 59,
+    "eventCode": "800 FR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 1500,
+    "strokeName": "Freestyle",
+    "strokeAbbreviation": "FR",
+    "eventId": 60,
+    "eventCode": "1500 FR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 65,
+    "eventCode": "50 BK LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 66,
+    "eventCode": "100 BK LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Backstroke",
+    "strokeAbbreviation": "BK",
+    "eventId": 67,
+    "eventCode": "200 BK LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 68,
+    "eventCode": "50 BR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 69,
+    "eventCode": "100 BR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Breaststroke",
+    "strokeAbbreviation": "BR",
+    "eventId": 70,
+    "eventCode": "200 BR LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 50,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 71,
+    "eventCode": "50 FL LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 100,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 72,
+    "eventCode": "100 FL LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Butterfly",
+    "strokeAbbreviation": "FL",
+    "eventId": 73,
+    "eventCode": "200 FL LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 200,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 74,
+    "eventCode": "200 IM LCM",
+    "courseCode": "LCM"
+  },
+  {
+    "distance": 400,
+    "strokeName": "Individual Medley",
+    "strokeAbbreviation": "IM",
+    "eventId": 75,
+    "eventCode": "400 IM LCM",
+    "courseCode": "LCM"
+  }
+]
