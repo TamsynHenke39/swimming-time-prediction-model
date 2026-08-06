@@ -1,6 +1,9 @@
+from pathlib import Path
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 import json
@@ -36,7 +39,9 @@ DROPPED_FEATURES =[
             "event",
             "distance",
             "stroke",
-            "meetName"
+            "course",
+            "meetName",
+            "swimDate",
         ]
 
 def load_event_df(event_name):
@@ -65,8 +70,47 @@ def train_model(X, y):
     model = LinearRegression()
     model.fit(X_train, y_train)
 
-    print("Intercept:", model.intercept_)
-    print("Coefficients:", model.coef_)
+    predictions = model.predict(X_test)
+    mae = mean_absolute_error(y_test, predictions)
+    mse = mean_squared_error(y_test, predictions)
+    r2 = r2_score(y_test, predictions)
+    # print(f"    MAE: {mae:.3f} seconds")
+    # print(f"    MSE: {mse:.3f} seconds")
+    # print(f"    R^2: {r2:.3f}
 
-    # Step 7 - make predictions
-    y_pred = model.predict(X_test)
+    stats = [mae, mse, r2]
+
+    return model, stats
+
+def main():
+
+    models = {}
+    events = sorted(df["event"].unique())
+
+    for event in events:
+        print(f"Training model for {event}")
+
+        X, y = load_event_df(event)
+
+        if len(X) == 0:
+            print(f"Skipping {event}. Not enough data to train model")
+            continue
+
+        models[event] = train_model(X, y)
+        print(f"{event}: {len(X)} samples")
+
+    models = sorted(
+        models.items(),
+        key=lambda x: x[1][1][2]
+    )
+
+    print("\n")
+
+    for model in models:
+        print(f"Printing training statisitcs for {model[0]}")
+        print(f"    MAE: {model[1][1][0]:.3f} seconds")
+        print(f"    MSE: {model[1][1][1]:.3f} seconds")
+        print(f"    R^2: {model[1][1][2]:.3f}")
+
+if __name__ == "__main__":
+    main()
