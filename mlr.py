@@ -29,7 +29,6 @@ NUMERIC_FEATURES = [
         "seasonCount",
     ]
 CATEGORICAL_FEATURES = [
-        "region",
         "isNcaa",
 ]
 DROPPED_FEATURES =[
@@ -42,6 +41,7 @@ DROPPED_FEATURES =[
             "course",
             "meetName",
             "swimDate",
+            "region",
         ]
 
 def load_event_df(event_name):
@@ -60,12 +60,14 @@ def load_event_df(event_name):
     X = event_df.drop(columns=DROPPED_FEATURES, errors="ignore")
 
     y = event_df['swimTime']
+
     return X, y
 
 
 def train_model(X, y):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
+
 
     model = LinearRegression()
     model.fit(X_train, y_train)
@@ -78,9 +80,18 @@ def train_model(X, y):
     # print(f"    MSE: {mse:.3f} seconds")
     # print(f"    R^2: {r2:.3f}
 
-    stats = [mae, mse, r2]
+    stats = {"mae": mae,"mse": mse, "r2": r2}
 
-    return model, stats
+    importance = pd.DataFrame({
+        'Feature': X.columns,
+        'Coefficient': model.coef_,
+        'Abs_Coefficient': abs(model.coef_)
+    })
+
+    importance = importance.sort_values(by='Abs_Coefficient', ascending=False)
+
+    model_dict = {"model": model, "stats": stats, "importance": importance, "numSamples": len(X)}
+    return model_dict
 
 def main():
 
@@ -88,7 +99,6 @@ def main():
     events = sorted(df["event"].unique())
 
     for event in events:
-        print(f"Training model for {event}")
 
         X, y = load_event_df(event)
 
@@ -99,18 +109,27 @@ def main():
         models[event] = train_model(X, y)
         print(f"{event}: {len(X)} samples")
 
-    models = sorted(
-        models.items(),
-        key=lambda x: x[1][1][2]
+    sorted_events = sorted(
+        models,
+        key=lambda event: models[event]["numSamples"],
+        reverse=True
     )
 
     print("\n")
+    #print the training statistics
+    for event in sorted_events:
+        model = models[event]
+        print(f"Printing training statisitcs for {event}")
+        print(f"    MAE: {model["stats"]["mae"]:.3f} seconds")
+        print(f"    MSE: {model["stats"]["mse"]:.3f} seconds")
+        print(f"    R^2: {model["stats"]["r2"]:.3f}")
 
-    for model in models:
-        print(f"Printing training statisitcs for {model[0]}")
-        print(f"    MAE: {model[1][1][0]:.3f} seconds")
-        print(f"    MSE: {model[1][1][1]:.3f} seconds")
-        print(f"    R^2: {model[1][1][2]:.3f}")
+        best_feature = model["importance"].loc[model["importance"]["Abs_Coefficient"].idxmax()]
+        print("Most predictive feature:", best_feature["Feature"])
+
+    #print the coefficeints that are the most important
+
+    #print the
 
 if __name__ == "__main__":
     main()
