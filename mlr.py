@@ -2,6 +2,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
@@ -45,7 +46,10 @@ def load_training_data(path= "training_data.csv"):
     return pd.read_csv(path)
 
 def get_events(df):
-    return sorted(df["event"].unique())
+    return (sorted(df["event"].unique()),
+            sorted(df["distance"].unique()),
+            sorted(df["stroke"].unique()),
+            sorted(df["course"].unique()))
 
 def load_event_df(df, event_name):
     event_df = df[df["event"] == event_name].copy()
@@ -86,7 +90,6 @@ def compute_importance(model, X):
 
     return importance.sort_values(by='Abs_Coefficient', ascending=False)
 
-
 def train_model(X, y):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
@@ -99,7 +102,8 @@ def train_model(X, y):
         "model": model,
         "stats": stats,
         "importance": importance,
-        "numSamples": len(X)
+        "numSamples": len(X),
+        "df": X,
     }
 
 def build_all_models(df, events):
@@ -162,7 +166,41 @@ def print_feature_ranking(ranked, total):
     for i, (feature, count) in enumerate(ranked[1:], start=2):
         print(f"    #{i} most predictive feature for models: {feature} ({count}/{total})")
 
-def print_report(models, events):
+
+def feature_pie_plot(ranked, total, title):
+    all_features = [item[0] for item in ranked]
+    all_counts = [item[1] for item in ranked]
+    plt.pie(all_counts, labels=all_features, autopct='%1.1f%%')
+    plt.title(f'Most predictive features for {title} (n={total})')
+    # plt.legend(title="Predictive Features")
+    plt.savefig(f"figures/feature_pie_plot_{title.replace(" ", "_")}.png", dpi=300, bbox_inches="tight")
+    plt.close()
+
+def get_correlogram(models):
+    for event in models:
+        df = models[event]["df"]
+
+        plt.figure(figsize=(12, 10), dpi=80)
+
+        sns.heatmap(
+            df.corr(),
+            xticklabels=df.corr().columns,
+            yticklabels=df.corr().columns,
+            cmap="RdYlGn",
+            center=0,
+            annot=True
+        )
+
+        plt.title(f"Correlogram of variables for {event}", fontsize=18)
+        plt.xticks(fontsize=10)
+        plt.yticks(fontsize=10)
+        plt.tight_layout()
+
+        plt.savefig(f"figures/correlogram_{event}.png", dpi=300, bbox_inches="tight")
+        plt.close()
+
+
+def print_report(models, events, title):
     print("\n")
     for event in events:
         print_model_stats(event, models[event])
@@ -172,18 +210,76 @@ def print_report(models, events):
     ranked = rank_features(features)
     print_feature_ranking(ranked, len(events))
 
-    #TODO: add a pie graph chart to display the print feature ranking
+    #show all graphics
+    feature_pie_plot(ranked, len(events), title)
+    get_correlogram(models)
+
+
+def get_custom_data(models, events, distances, strokes, courses):
+    print("Which course of events do you want information on (SCY, SCM, LCM)? Type N/A to skip. ", end="")
+    course = input()
+    while course not in courses and course != "n/a":
+        print("Invalid course. Enter valid course or type N/A to skip. ", end="")
+        course = input()
+
+    print("Which stroke of events (FR, BK, BR, FL, IM)? Type N/A to skip. ", end="")
+    stroke = input()
+    while stroke not in strokes and stroke != "n/a":
+        print("Invalid stroke. Enter valid stroke or type N/A to skip. ", end="")
+        stroke = input()
+
+    print("Which distance of events (50, 100, 200, 400, 500, 800, 1000, 1500, 1650) Type N/A to skip. ", end="")
+    distance = input()
+    while distance != "n/a" and int(distance) not in distances :
+        print("Invalid distance (or not enough data on this distance to display)", end="")
+        distance = input()
+
+    filtered_models = {}
+    filtered_events = []
+
+    for event in events:
+
+        # add all events of a specific course/stroke/distance, or all if N/A
+        if ((course in event or course == "n/a")
+                and (stroke in event or stroke == "n/a")
+                and (distance in event or distance == "n/a")):
+
+            filtered_events.append(event)
+
+            if event in models:
+                filtered_models[event] = models[event]
+
+    if stroke == "n/a" and course == "n/a" and distance == "n/a":
+        title = "all events"
+    else:
+        stroke_str = stroke if stroke != "n/a" else ""
+        course_str = course if course != "n/a" else ""
+        distance_str = (distance + "s" if distance != "n/a" else "")
+        title = " ".join(
+            part for part in [distance_str, stroke_str, course_str]
+            if part
+        )
+
+    print(f"{title}: {filtered_events}")
+    print("Are you alright with the selection of events? Enter 'no' to start over?")
+    response = input()
+
+    if response == 'no':
+        get_custom_data(models, events, distances, strokes, courses)
+
+    return filtered_models, filtered_events, title
+
 
 def main():
     df = load_training_data()
-    events = get_events(df)
+    events, distances, strokes, courses = get_events(df)
 
     models = build_all_models(df, events)
     sorted_events = sort_events_by_sample_size(models)
 
-    print_report(models, sorted_events)
+    model_subset, events_subset, title = get_custom_data(models, sorted_events, distances, strokes, courses)
 
-    #print the
+    print_report(model_subset, events_subset, title)
 
 if __name__ == "__main__":
     main()
