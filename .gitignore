@@ -1,0 +1,5 @@
+failed_urls.txt
+*.csv
+partial_jsons/
+athelete_times_jsons/
+athlete_ids.json
