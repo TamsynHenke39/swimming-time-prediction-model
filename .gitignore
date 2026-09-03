@@ -1,9 +1,14 @@
-#Ignore all locally scraped data
+# Ignore all locally scraped data
 *.csv
-data_jsons/athlete_ids.json
-
-#Keep the folder itself, ignore data inside
+athlete_ids.json
 athlete_times_jsons/
 
+# Ignore local scraper state
+failed_urls.txt
+processed_files.txt
+
+# Ignore local Python environment
 .venv/
+
+# Ignore generated figures
 figures/
