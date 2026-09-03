@@ -7,6 +7,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 import json
 import os
 
@@ -94,6 +96,18 @@ def train_model(X, y):
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
 
+    #sc = StandardScaler()
+
+    #X_train_scaled = sc.fit_transform(X_train)
+    #X_test_scaled = sc.transform(X_test)
+
+    #pca = PCA(n_components=0.95)
+
+    # X_train_pca = pca.fit_transform(X_train_scaled)
+    # X_test_pca = pca.transform(X_test_scaled)
+    #
+    # explained_variance = pca.explained_variance_ratio_
+
     model = fit_model(X_train, y_train)
     stats = evaluate_model(model, X_test, y_test)
     importance = compute_importance(model, X)
@@ -122,10 +136,10 @@ def build_all_models(df, events):
 
     return models
 
-def sort_events_by_sample_size(models):
+def sort_events_by_r2(models):
     return sorted(
         models,
-        key=lambda event: models[event]["numSamples"],
+        key=lambda event: models[event]["stats"]["r2"],
         reverse=True
     )
 
@@ -151,7 +165,7 @@ def rank_features(features):
 def print_model_stats(event, model):
     stats = model["stats"]
     best_feature = get_top_feature(model["importance"])
-    print(f"Printing training statisitcs for {event}")
+    print(f"Printing training statistics for {event}")
     print(f"    MAE: {model["stats"]["mae"]:.3f} seconds")
     print(f"    MSE: {model["stats"]["mse"]:.3f} seconds")
     print(f"    R^2: {model["stats"]["r2"]:.3f}")
@@ -211,8 +225,8 @@ def print_report(models, events, title):
     print_feature_ranking(ranked, len(events))
 
     #show all graphics
-    feature_pie_plot(ranked, len(events), title)
-    get_correlogram(models)
+    # feature_pie_plot(ranked, len(events), title)
+    # get_correlogram(models)
 
 
 def get_custom_data(models, events, distances, strokes, courses):
@@ -275,7 +289,7 @@ def main():
     events, distances, strokes, courses = get_events(df)
 
     models = build_all_models(df, events)
-    sorted_events = sort_events_by_sample_size(models)
+    sorted_events = sort_events_by_r2(models)
 
     model_subset, events_subset, title = get_custom_data(models, sorted_events, distances, strokes, courses)
 

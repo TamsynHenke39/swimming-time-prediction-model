@@ -1,5 +1,9 @@
-failed_urls.txt
+#Ignore all locally scraped data
 *.csv
-partial_jsons/
-athelete_times_jsons/
-athlete_ids.json
+data_jsons/athlete_ids.json
+
+#Keep the folder itself, ignore data inside
+athlete_times_jsons/
+
+.venv/
+figures/
