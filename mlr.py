@@ -1,9 +1,5 @@
 from pathlib import Path
-
-import numpy as np
 import pandas as pd
-import seaborn as sns
-import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
@@ -28,9 +24,11 @@ NUMERIC_FEATURES = [
         "yearsCompeting",
         "seasonCount",
     ]
+
 CATEGORICAL_FEATURES = [
         "isNcaa",
 ]
+
 DROPPED_FEATURES =[
             "memberId",
             "fullName",
@@ -44,16 +42,47 @@ DROPPED_FEATURES =[
             "region",
         ]
 
-def load_training_data(path= "training_data.csv"):
+def load_training_data(path= "scraping/training_data.csv"):
+    """
+    Loads training data into Dataframe from CSV
+
+    Args:
+        path - the location of the CSV
+
+    Returns:
+        the Dataframe read from the CSV
+    """
     return pd.read_csv(path)
 
 def get_events(df):
+    """
+    Creates a dataframe of all unique events, strokes, distances, and courses
+
+    Args:
+        df: the Dataframe loaded from the training CSV
+
+    Returns:
+        a data frame sorted by unique, event, distance, stroke, and course
+    """
     return (sorted(df["event"].unique()),
             sorted(df["distance"].unique()),
             sorted(df["stroke"].unique()),
             sorted(df["course"].unique()))
 
 def load_event_df(df, event_name):
+    """
+    Filters training dataframe to a single event, splits into features and target
+    Filters df to rows matching event_name, drops rows with missing values, one-hot encodes
+    categorical features, and removes columns not used for training
+
+    Args:
+        df: the Dataframe loaded from the training CSV
+        event_name: full name of the event, ex: "100 FR SCY"
+
+    Returns:
+        a tuple (X, y) where X is the filtered, encoded feature DataFrame and y is the target swim times
+
+    """
     event_df = df[df["event"] == event_name].copy()
     event_df= event_df.dropna() #drop rows without enough data points
 
@@ -71,11 +100,34 @@ def load_event_df(df, event_name):
     return X, y
 
 def fit_model(X_train, y_train):
+    """
+    Fits multilinear regression model to the training data
+
+    Args:
+        X_train: the feature DataFrame for a given event
+        y_train: the target swim times corresponding to X_train
+
+    Returns:
+         fitted multilinear regression model
+    """
     model = LinearRegression()
     model.fit(X_train, y_train)
     return model
 
 def evaluate_model(model, X_test, y_test):
+    """
+    Evaluates multilinear regression model on test set using mean absolute error (MAE),
+    mean squared error (MSE), and R^2
+
+    Args:
+        model: the multilinear regression model for a given event
+        X_test: test set of features for a given event
+        y_test: corresponding test set of target swim times
+
+    Returns:
+        dictionary of model performance using MAE, MSE, & R2 metrics
+
+    """
     predictions = model.predict(X_test)
     return {
         "mae":  mean_absolute_error(y_test, predictions),
@@ -84,6 +136,17 @@ def evaluate_model(model, X_test, y_test):
     }
 
 def compute_importance(model, X):
+    """
+    Creates dataframe sorted by "importance" of MLR model's features,  the absolute
+    value of the feature coefficient
+
+    Args:
+        model: the multilinear regression model for a given event
+        X: given features of the model
+
+    Returns:
+        Dataframe of model features, sorted by absolute value of coefficients
+    """
     importance = pd.DataFrame({
         'Feature': X.columns,
         'Coefficient': model.coef_,
@@ -93,6 +156,18 @@ def compute_importance(model, X):
     return importance.sort_values(by='Abs_Coefficient', ascending=False)
 
 def train_model(X, y):
+
+    """
+    Trains multilinear regression model for a given event & computes its performance statistics and feature importances
+
+    Args:
+        X: feature dataframe for a given event
+        y: associated target swim times
+
+    Returns:
+        a dict aggregating the model's info: the fitted model, performance stats (MAE, MSE, R^2), feature importance
+        DataFrame, number of training samples, and the feature DataFrame used
+    """
     X_train, X_test, y_train, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42)
 
@@ -121,6 +196,16 @@ def train_model(X, y):
     }
 
 def build_all_models(df, events):
+    """
+    Trains a model for every event with enough data
+
+    Args:
+        df: the Dataframe loaded from the training CSV
+        events: the event names to train models for
+
+    Returns:
+        a dictionary mapping event names to that event's model
+    """
     models = {}
 
     for event in events:
@@ -135,165 +220,3 @@ def build_all_models(df, events):
         print(f"{event}: n={len(X)}")
 
     return models
-
-def sort_events_by_r2(models):
-    return sorted(
-        models,
-        key=lambda event: models[event]["stats"]["r2"],
-        reverse=True
-    )
-
-## Printing methods
-
-def get_top_feature(importance_df):
-    best_feature = importance_df.loc[importance_df["Abs_Coefficient"].idxmax()]
-    return best_feature["Feature"]
-
-def tally_top_features(models, events):
-    features = {}  # track which feature is the most
-    # print the training statistics
-    for event in events:
-        best_feature_name = get_top_feature(models[event]["importance"])
-        features[best_feature_name] = features.get(best_feature_name, 0) + 1
-    return features
-
-def rank_features(features):
-    """Returns dictionary of (feature, count) pairs sorted from most to least predictive by count"""
-    return sorted(features.items(), key = lambda item: item[1], reverse=True)
-
-
-def print_model_stats(event, model):
-    stats = model["stats"]
-    best_feature = get_top_feature(model["importance"])
-    print(f"Printing training statistics for {event}")
-    print(f"    MAE: {model["stats"]["mae"]:.3f} seconds")
-    print(f"    MSE: {model["stats"]["mse"]:.3f} seconds")
-    print(f"    R^2: {model["stats"]["r2"]:.3f}")
-    print(f"    Most predictive feature: {best_feature}")
-
-
-def print_feature_ranking(ranked, total):
-    print("\n")
-    max_feature, max_count = ranked[0]
-    print(f"Most predictive feature for all models: {max_feature} ({max_count}/{total})")
-
-    for i, (feature, count) in enumerate(ranked[1:], start=2):
-        print(f"    #{i} most predictive feature for models: {feature} ({count}/{total})")
-
-
-def feature_pie_plot(ranked, total, title):
-    all_features = [item[0] for item in ranked]
-    all_counts = [item[1] for item in ranked]
-    plt.pie(all_counts, labels=all_features, autopct='%1.1f%%')
-    plt.title(f'Most predictive features for {title} (n={total})')
-    # plt.legend(title="Predictive Features")
-    plt.savefig(f"figures/feature_pie_plot_{title.replace(" ", "_")}.png", dpi=300, bbox_inches="tight")
-    plt.close()
-
-def get_correlogram(models):
-    for event in models:
-        df = models[event]["df"]
-
-        plt.figure(figsize=(12, 10), dpi=80)
-
-        sns.heatmap(
-            df.corr(),
-            xticklabels=df.corr().columns,
-            yticklabels=df.corr().columns,
-            cmap="RdYlGn",
-            center=0,
-            annot=True
-        )
-
-        plt.title(f"Correlogram of variables for {event}", fontsize=18)
-        plt.xticks(fontsize=10)
-        plt.yticks(fontsize=10)
-        plt.tight_layout()
-
-        plt.savefig(f"figures/correlogram_{event}.png", dpi=300, bbox_inches="tight")
-        plt.close()
-
-
-def print_report(models, events, title):
-    print("\n")
-    for event in events:
-        print_model_stats(event, models[event])
-
-    #tally which features are the top features, rank, then print
-    features = tally_top_features(models, events)
-    ranked = rank_features(features)
-    print_feature_ranking(ranked, len(events))
-
-    #show all graphics
-    # feature_pie_plot(ranked, len(events), title)
-    # get_correlogram(models)
-
-
-def get_custom_data(models, events, distances, strokes, courses):
-    print("Which course of events do you want information on (SCY, SCM, LCM)? Type N/A to skip. ", end="")
-    course = input()
-    while course not in courses and course != "n/a":
-        print("Invalid course. Enter valid course or type N/A to skip. ", end="")
-        course = input()
-
-    print("Which stroke of events (FR, BK, BR, FL, IM)? Type N/A to skip. ", end="")
-    stroke = input()
-    while stroke not in strokes and stroke != "n/a":
-        print("Invalid stroke. Enter valid stroke or type N/A to skip. ", end="")
-        stroke = input()
-
-    print("Which distance of events (50, 100, 200, 400, 500, 800, 1000, 1500, 1650) Type N/A to skip. ", end="")
-    distance = input()
-    while distance != "n/a" and int(distance) not in distances :
-        print("Invalid distance (or not enough data on this distance to display)", end="")
-        distance = input()
-
-    filtered_models = {}
-    filtered_events = []
-
-    for event in events:
-
-        # add all events of a specific course/stroke/distance, or all if N/A
-        if ((course in event or course == "n/a")
-                and (stroke in event or stroke == "n/a")
-                and (distance in event or distance == "n/a")):
-
-            filtered_events.append(event)
-
-            if event in models:
-                filtered_models[event] = models[event]
-
-    if stroke == "n/a" and course == "n/a" and distance == "n/a":
-        title = "all events"
-    else:
-        stroke_str = stroke if stroke != "n/a" else ""
-        course_str = course if course != "n/a" else ""
-        distance_str = (distance + "s" if distance != "n/a" else "")
-        title = " ".join(
-            part for part in [distance_str, stroke_str, course_str]
-            if part
-        )
-
-    print(f"{title}: {filtered_events}")
-    print("Are you alright with the selection of events? Enter 'no' to start over?")
-    response = input()
-
-    if response == 'no':
-        get_custom_data(models, events, distances, strokes, courses)
-
-    return filtered_models, filtered_events, title
-
-
-def main():
-    df = load_training_data()
-    events, distances, strokes, courses = get_events(df)
-
-    models = build_all_models(df, events)
-    sorted_events = sort_events_by_r2(models)
-
-    model_subset, events_subset, title = get_custom_data(models, sorted_events, distances, strokes, courses)
-
-    print_report(model_subset, events_subset, title)
-
-if __name__ == "__main__":
-    main()

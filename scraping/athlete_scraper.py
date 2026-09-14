@@ -9,34 +9,34 @@ EVENT_LIST = json.loads(Path("../data_jsons/all_events.json").read_text())
 TIME_API = "GetTopTimesLeaderBoard"
 
 
-def get_top_times_url(eventId, course, genderID):
+def get_top_times_url(event_id, course, gender_id):
     """Generate a formatted URL for searching the USA Swimming database.
 
     Retrieves top times for a specific swimming event based on the course,
     gender, and event ID.
 
     Args:
-        eventID (str): unique numerical event identifier for each swim event
-        course (str): Type of pool used (e.g., 'SCY', 'SCM', 'LCM').
-        genderID (int): ID for the gender, 1 for male, 2 for female
+        event_id: unique numerical event identifier for each swim event
+        course: Type of pool used (e.g., 'SCY', 'SCM', 'LCM').
+        gender_id: ID for the gender, 1 for male, 2 for female
 
     Returns:
-        str: formatted URL pointing to USA swimming database
+        Formatted URL pointing to USA swimming database
     """
-    return f'https://data.usaswimming.org/leaderboards/top-times?eventId={eventId}&course={course}&competitionGenderTypeId={genderID}'
+    return f'https://data.usaswimming.org/leaderboards/top-times?eventId={event_id}&course={course}&competitionGenderTypeId={gender_id}'
 
 
 def scrape_athlete_ids(page):
     """Scrapes athelete ids for all events and gender.
 
     Generates URLs for men's and women's leaderboards for all events, accumulates
-    dictionary of unique athelete profiles
+    dictionary of unique athlete profiles
 
     Args:
-        page (Playwright.sync_api.Page): The Playwright browswer tab or window
+        page: The Playwright browswer tab or window
 
     Returns:
-        dict: A dictionary of athletes, aggregated by member ID
+        A dictionary of athletes, aggregated by member ID
     """
 
     athletes_dict = {}
@@ -71,9 +71,9 @@ def scrape_leaderboard(page, scrape_url,  athletes_dict):
     and adds each unique athlete ID and name to the provided dictionary
 
     Args:
-        page (playwright.sync_api.Page): The Playwright browser tab or window.
-        scrape_url (str): The URL from which athlete data will be fetched.
-        athletes_dict (dict): A dictionary storing athlete IDs and names.
+        page: The Playwright browser tab or window.
+        scrape_url: The URL from which athlete data will be fetched.
+        athletes_dict: A dictionary storing athlete IDs and names.
     """
     try:
         with page.expect_response(
@@ -102,10 +102,10 @@ def scrape_leaderboard(page, scrape_url,  athletes_dict):
 
 def main():
     """
-    Initiates the scraping process using Playwright.
+    Initiates the scraping process.
 
-    Launches a Chromimum browswer instance, gathers all athlete data,
-    sorts the unique ahtletes by name, and outputs the results to 'athlete_ids.json'
+    Launches browser instance, gathers all athlete data,
+    sorts the unique athletes by name, and outputs the results to 'athlete_ids.json'
     """
 
     with sync_playwright() as p:

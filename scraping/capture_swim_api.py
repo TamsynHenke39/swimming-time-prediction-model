@@ -22,9 +22,17 @@ TIME_API = "GetAllTimesForFilters"
 MEMBER_APIS =  {"memberProfile" : "GetMember", "memberCourses": "GetSwimmerCourses", "memberSeasons": "GetSwimmerSeasons", "memberEvents": "GetSwimmerEvents"}
 
 
-def load_swimmer_profile(page, member_url):
+def get_swimmer_profile(page, member_url):
+    """
+    Scrapes data from a swimmer profile URL to generate an aggregated dataset
 
+    Args:
+        page: The Playwright browser tab or window.
+        member_url: The URL from which swimmer (member) data will be fetched.
 
+    Returns:
+        aggregated data for a given swimmer, including basic athlete info & race history
+    """
     #general profile, recorded seasons, events swam
     athlete_profile = {}
 
@@ -41,7 +49,6 @@ def load_swimmer_profile(page, member_url):
     parsed_events = build_swimmer_events(athlete_profile['memberEvents'])
 
     #print(f'Scraping profile for {athlete_profile["memberProfile"]["shortName"]}')
-
     times = scrape_swimmer_times(page, member_url, athlete_profile["memberCourses"], parsed_events)
 
     parsed_profile = parse_profile(athlete_profile)
@@ -51,6 +58,16 @@ def load_swimmer_profile(page, member_url):
     return parsed_profile
 
 def parse_profile(athlete_profile):
+    """
+    Parses and formats a swimmer's aggregated profile data in the final output
+
+    Parameters:
+        athlete_profile: raw aggregated athlete profile; 'memberProfile', 'memberCourses', and 'memberSeasons'
+                        must not be None
+
+    Returns:
+        a parsed, formatted athlete profile dict
+    """
 
     parsed_profile = {}
 
@@ -80,6 +97,19 @@ def parse_profile(athlete_profile):
 
 
 def scrape_swimmer_times(page, url, courses, events):
+
+    """
+    Scrapes race history data for a given swimmer across all their courses and events
+
+    Args:
+        page: The Playwright browser tab or window.
+        url: The base URL for the swimmer's profile, used to access per-event time history URLs
+        courses: The courses a swimmer has competed in (SCY, SCM, LCM)
+        events: The events a swimmer has competed in (100 FR, 200 BK, etc.), keyed by parsed event names
+
+    Returns:
+        A dictionary of the swimmer's race history, keyed by event code (ex: 100 FR SCY, 200 BK SCM, etc.)
+    """
 
     time_dict = {}
 
@@ -125,22 +155,32 @@ def scrape_swimmer_times(page, url, courses, events):
 
 ##### URL PARSING CODE #####
 def get_swimmer_url(memberId):
-    '''
+    """
+    Generates a URL to access a swimmer (member) profile on USA Swimming Database
 
-    :param memberId: a swimmer's member ID
-    :return: a URL for the swimmer's USA swimming profile, showing all times for every event swam
-    '''
+    Args:
+        memberId: a swimmer's member ID
+
+    Returns:
+        a URL for the swimmer's USA swimming profile, showing all times for every event swam
+    """
+
     return f"https://data.usaswimming.org/search/athlete/{memberId}/all-times?&sortBy=Newest"
 
 
 def build_times_url(member_url, course, event_ids):
-    '''
+    """
+    Generates a URL to access a swimmer's time history for a given course and event on USA Swimming Database
 
-    :param member_url: a URL for the swimmer's USA swimming profile, showing all times for every event swam
-    :param course: the event course - SCY, SCM, or LCM
-    :param event_ids: the URL formatted event ids
-    :return: a search URL for the swimmers times for a given event
-    '''
+    Args:
+        member_url: the base profile URL for the swimmer, used as a template
+        course: the event course - SCY, SCM, or LCM
+        event_ids: the URL-formatted event id string
+
+    Returns:
+        a URL to access a swimmer's times for a given course and event
+
+    """
 
     before, sep, after = member_url.partition("all-times?")
     first_half = before + sep
@@ -151,6 +191,16 @@ def build_times_url(member_url, course, event_ids):
 
 
 def build_swimmer_events(events):
+
+    """
+    Builds dictionary of swimmer events formatted into valid query strings
+
+    Args:
+        events: A list of event records, containing strokeName, distance, and eventId
+
+    Returns:
+        A dictionary mapping each parsed event name to its comma-separated event id string
+    """
 
     swimmer_parsed_events = {}
 
@@ -176,6 +226,19 @@ def build_swimmer_events(events):
 ###### NETWORK REQUEST HELPER #####
 
 def do_request(page, url, api, retries=3):
+    """
+    Captures the network response from a given URL
+
+    Args:
+        page: The Playwright browser tab or window.
+        url: The URL to be fetched
+        api: The name of the API endpoint to watch for in the response
+        retries: The max number of unsuccessful request attempts allowed before stopping
+
+    Returns:
+        Network response as JSON data, None otherwise if request fails
+
+    """
     for attempt in range(1, retries + 1):
         try:
             with page.expect_response(
@@ -205,6 +268,14 @@ def do_request(page, url, api, retries=3):
 
 
 def main():
+
+    """
+    Runs scraping process for a configured batch of athletes.
+
+    Scrapes profile and time data for each athlete, saving incremental progress to a partial file, then saves the final
+    sorted results to athlete_times_{BATCH_START}_{BATCH_END}
+    """
+
     overall_dict = {}
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
@@ -216,7 +287,7 @@ def main():
             member_url = get_swimmer_url(memberId)
 
             try:
-                profile = load_swimmer_profile(page, member_url)
+                profile = get_swimmer_profile(page, member_url)
                 if profile is not None:
                     overall_dict[memberId] = profile
             except Exception as e:
